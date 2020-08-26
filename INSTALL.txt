@@ -1,0 +1,74 @@
+Installasjonsprosedyre:
+=======================
+
+Trinn 1: Installere scoop
+-------------------------
+Vi bruker scoop til å installere R uten admin-rettigheter.
+Har du allerede R eller scoop installert,
+kan du hoppe over.
+
+I powershell:
+
+>  Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+>  Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+
+Trinn 2: Installere R
+---------------------
+Har du allerede R installert kan du hoppe over
+
+I et hvilket som helst shell:
+
+>  scoop install r
+
+Trinn 3: Installere nødvendige R-pakker
+---------------------------------------
+I et hvilket som helst shell
+
+>  r.exe --no-save
+
+Dette starter R. Skriv så
+
+>   install.packages("RDCOMClient", repos = "http://www.omegahat.net/R")
+>   install.packages("RODBC")
+>   install.packages("yaml")
+>   install.packages("fs")
+>   install.packages("stringr")
+>   q()
+
+Hvis du får noen spørsmål:
+ * velg norsk mirror
+ * svar "yes" til "personal library instead"
+ * svar "yes" til "create a personal library"
+ * svar "no" til "Save workspace image?"
+
+Trinn 4: Installere R-pakken fmtsafeconlog
+------------------------------------------
+Stå i samme directory som denne fila.
+
+I et hvilket som helst shell:
+
+>  Rcmd.exe INSTALL --no-multiarch --with-keep.source .
+
+Trinn 5: Kjøre programmet
+-------------------------
+Programmet trenger en yaml-konfigurasjonsfil for å kjøre.
+Denne filen inneholder blant annet kundenavn/nummer,emailadresser
+til de som trenger tilsendt en forenklet logg,
+samt fra-dato og til-dato loggen skal tas ut for.
+
+Datoer må endres manuelt for hver kjøring.
+
+Det er litt tungvint å skrive
+
+>  rscript.exe -e "library(fmtsafeconlog); library(RDCOMClient); fmtsafeconlog('Safecon','example.yaml')"
+
+så det beste er å bruke en batch-fil til å kjøre programmet,
+
+Se filene example.cmd og example.yaml som eksempler på hvordan dette
+best tilpasses egen bruk.
+
+Merk: Når pakken fmtsafeconlog er installert i R som beskrevet over,
+kan man kjøre programmet fra hvor som helst.
+Så batch-fila og yaml-fila kan lagres på fellesområdet.
+(Men hver bruker må installere R og nødvendige pakker selv).
+

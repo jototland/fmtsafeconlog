@@ -1,0 +1,38 @@
+# Dette er en YAML-konfigurasjonsfil.
+# Se https://yaml.org/
+# Innrykk (antall mellomrom fra venstre) har en betydning.
+# Når du lagrer denne filen, må den være i Unicode UTF-8 encoding.
+
+# Hvilken mappe skal rapportene lagres i på disk
+outputDir: example-reports
+# skal rapportene bare lagres på disk, eller sendes automatisk?
+sendMail: yes
+# Skal vi bare lagre et utkast i utboksen,
+# eller skal mailutsendelse gå helt automatisk.
+# Anbefalt: "yes" (man må sende mail manuelt)
+onlySaveMailDraft: yes
+# Dato/tidsrom rapportene skal tas ut fra
+# (må endres for hver kjøring)
+fromDate: 2020-08-19 08:00
+toDate: 2020-08-20 08:00
+
+# Så kommer kundelisten...
+  # abonnent: Safecon kundenr
+  # navn: Safecon navn (må stemme, ellers feiler kjøringen)
+  # mailto/mailcc/mailbcc: hvem som skal ha rapporter
+  # alwaysMail: send også rapporter selv om det ikke har vært hendelser
+customers:
+  -
+    abonnent: 20001
+    navn: Testkunde #1
+    mailto:
+      - testmottaker@example.com
+    mailcc:
+      - test1@example.com
+      - test2@example.com
+  -
+    abonnent: 20002
+    navn: Testkunde #2
+    mailto:
+      - test3@example.com
+    mailcc:

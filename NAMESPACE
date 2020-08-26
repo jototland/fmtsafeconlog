@@ -1,0 +1,2 @@
+#exportPattern("^[[:alpha:]]+")
+exportPattern("fmtsafeconlog|send.outlook.email")
