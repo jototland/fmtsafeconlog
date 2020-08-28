@@ -1,7 +1,7 @@
 Package: fmtsafeconlog
 Type: Package
 Title: Simplify safecon signal log and mail it
-Version: 0.1.0
+Version: 0.1.1
 Author: Jo Totland <jt@safe.com>
 Maintainer: Jo Totland <jt@safe4.com>
 Description: This is an internal tool

@@ -115,7 +115,7 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
       trailer <- paste0("\n\n", trl("Ingen hendelser i tidsrommet"))
       writeLines(trailer, con=fd)
     } else {
-      trailer <- paste0("\n\n", trl("Se vedlegg."), "\n")
+      trailer <- paste0("\n\n", trl("Se vedlegg."))
       writeLines("\n", trl("Logg slutt."), con=fd)
     }
 
@@ -123,7 +123,7 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
     close(fd)
 
     # Sjekk om kunde vil ha mail, også ved ingen hendelser
-    always.mail <- customers[abonnent, "alwaysMail"]
+    always.mail <- customer$alwaysMail
     if (is.null(always.mail)) {
       always.mail <- F
     } else if (always.mail %in% c(1, "1", "true", "yes", "y", "ja", "j")) {
@@ -134,6 +134,13 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
 
     # Hvis vi skal sende mail, så gjør vi det nå
     if (send.mail && (bytes.written != 0 || always.mail)) {
+      if (customer$addManualProcessingPrMonth) {
+        manProc <- manual.processings.pr.month(odbc.dsn, customer$abonnent)
+        trailer <- paste0(
+          trailer, "\n\n",
+          trl("Antall behandlinger hittil i måneden: "), manProc, "\n",
+          trl("(dette bør være under 10)"))
+      }
       send.outlook.email(to=customer$mailto,
                          cc=customer$mailcc,
                          bcc=customer$mailbcc,
