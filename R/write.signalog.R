@@ -199,20 +199,6 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
           postfix)
     }
 
-    # TILK/FRAK
-    if (al_kort %in% c("TILK")) {
-      out(prefix,
-          sprintf(trl("Tilkobling")),
-          postfix)
-    }
-
-    # FRAK skrives ut med klokkeslett/dato
-    if (al_kort %in% c("FRAK")) {
-      out(prefix,
-          sprintf(trl("Frakobling")),
-          postfix)
-    }
-
     # Avsluttes signalement?
     if (hnd_type %in% '03') {
       out(trl("Behandling avsluttes"))
