@@ -30,10 +30,15 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
 
     # Opprettes nytt signalement?
     if (signalement && s_elem != previous_s_elem) {
-      behandling <- behandling + 1
-      out("\n\n",
-          trl("Behandling"),
-          " ", behandling)
+      if (al_kort %in% c("VARSEL") &&
+          str_matches(tekst_1, "Virtuell Vekterrunde")) {
+        out("\n\n")
+      } else {
+        behandling <- behandling + 1
+        out("\n\n",
+            trl("Behandling"),
+            " ", behandling)
+      }
       if (hnd_type %in% '22') {
         out(sig_dato, " ", trl("Operatør starter ny behandling manuelt"))
       }
@@ -196,6 +201,22 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     if (al_kort %in% "POLLUT") {
       out(prefix,
           sprintf(trl("Pollefeil")),
+          postfix)
+    }
+
+    # VARSEL om virtuell videorunde
+    if (al_kort %in% c("VARSEL") &&
+        str_matches(tekst_1, "Virtuell Vekterrunde")) {
+      out(prefix,
+          sprintf(trl("Tidsvarsling om virtuell vekterrunde")),
+          postfix)
+    }
+
+    # FRAK skrives ut med klokkeslett/dato
+    if (al_kort %in% c("KLAR") &&
+        str_matches(tekst_1, "Virtuell Vekterrunde")) {
+      out(prefix,
+          sprintf(trl("Virtuell vekterrunde fullført")),
           postfix)
     }
 

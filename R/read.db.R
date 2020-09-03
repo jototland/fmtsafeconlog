@@ -57,11 +57,18 @@ manual.processings.pr.month <- function(odbc.dsn, abonnent, date=Sys.time()) {
   month.start$min <- 0
   month.start$sec <- 0
   sql <- paste(
-    "select count(*) from signalog",
+    "select (select count(*) from signalog",
     "where abonnent =", abonnent,
     "and hnd_type = '10'",
     "and sig_dato >=", db.singlequote.format.date(month.start),
-    "and sig_dato <", db.singlequote.format.date(date))
+    "and sig_dato <", db.singlequote.format.date(date),
+    ")-(select count(*) from signalog",
+    "where abonnent =", abonnent,
+    "and al_kort = 'VARSEL'",
+    "and tekst_1 like '%Virtuell Vekterrunde%'",
+    "and sig_dato >=", db.singlequote.format.date(month.start),
+    "and sig_dato <", db.singlequote.format.date(date),
+    ")")
   conn <- RODBC::odbcConnect(odbc.dsn)
   result <- RODBC::sqlQuery(conn, sql, as.is=T)
   close(conn)

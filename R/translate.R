@@ -127,6 +127,14 @@ translations <- list(
 
   "(dette bør være under 10)"=list(
     se="(detta bör vara under 10)"
+  ),
+
+  "Tidsvarsling om virtuell vekterrunde"=list(
+    se="Tidsvarning om virtuell vaktrunda"
+  ),
+
+  "Virtuell vekterrunde fullført"=list(
+    se="Virtuell vaktrunda slutförd"
   )
 )
 translations <-
