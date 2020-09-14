@@ -103,7 +103,7 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
     headerPos <- seek(fd, where=0, origin="current")
 
     # Skriv ut forenklet signallog
-    write.signalog(siglog, fd)
+    write.signalog(siglog, fd, lang=lang)
 
     # Hvor lang ble den forenklede signalloggen?
     bytes.written <- seek(fd, where=0, origin="current") - headerPos

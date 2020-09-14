@@ -25,6 +25,10 @@ translations <- list(
     se="Blockerar alla signaler, tiden går ut efter %s minuter"
   ),
 
+  "Signal behandles automatisk, legges på venteliste"=list(
+    se="Signal behandlas automatiskt, placeras på väntelistan"
+  ),
+
   "Mottatt nytt signal, tilbake fra venteliste"=list(
     se="Ny signal mottagen, tillbaka från väntlistan"
   ),
@@ -49,8 +53,8 @@ translations <- list(
     se="Operatör skriver: "
   ),
 
-  " (til logg: "=list(
-    se=" (till log: "
+  "(til logg: "=list(
+    se="(till log: "
   ),
 
   "Alarm utløst sone %d"=list(
@@ -69,7 +73,11 @@ translations <- list(
     se="Pollingfel"
   ),
 
-  "Tilkobling"=list(
+  "Signaloverføring ok"=list(
+    se="Signalöverföring ok"
+  ),
+
+    "Tilkobling"=list(
     se="Tillkoppling"
   ),
 
@@ -79,6 +87,10 @@ translations <- list(
 
   "Behandling avsluttes"=list(
     se="Behandling avslutas"
+  ),
+
+  "Behandling avsluttes automatisk"=list(
+    se="Behandling avslutas automatiskt"
   ),
 
   "Forenklet signalbehandlingslogg"=list(

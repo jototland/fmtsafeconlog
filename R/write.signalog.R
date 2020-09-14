@@ -89,6 +89,12 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
             sprintf(
               trl("Blokkerer alle signaler, tid utløper etter %s minutter"),
               minutter))
+      } else if (str_matches(tekst_1, "definert, signal til VL")) {
+        out(sig_dato, " ",
+            trl("Signal behandles automatisk, legges på venteliste"))
+      } else if (!str_matches(tekst_1, "^Anm:")) {
+        warning(paste0("ukjent måte å legge noe på venteliste: abonnent=", (siglog[i, "abonnent"]),
+                       " sig_dato=", sig_dato, " s_elem=", s_elem, " hnd_type=", hnd_type, " tekst_1=", tekst_1))
       }
     }
 
@@ -127,9 +133,9 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
           trl("Behandling"),
           " ", behandling)
       if (str_matches(tekst_1, "^Retursignal fra VL")) {
-        out(sig_dato, trl("Timeout fra venteliste"))
+        out(sig_dato, " ", trl("Timeout fra venteliste"))
       } else if (str_matches(tekst_1, "^Overført fra venteliste")) {
-        out(sig_dato, trl("Manuelt tatt ned fra venteliste"))
+        out(sig_dato, " ", trl("Manuelt tatt ned fra venteliste"))
       }
     }
 
@@ -171,13 +177,13 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     prefix <- paste0(sig_dato, " ")
     postfix <- ''
     if (s_elem ==0 || venteliste) {
-      prefix <- paste0(prefix, translate(" (til logg: ", lang=lang))
+      prefix <- paste0(prefix, translate("(til logg: ", lang=lang))
       postfix <- ')'
     }
 
     # INNB og ALARM
     if (al_kort %in% c("INNB", "ALARM")) {
-      out(prefix, " ",
+      out(prefix,
           sprintf(trl("Alarm utløst sone %d"),
                   gruppenr),
           postfix)
@@ -204,7 +210,13 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
           postfix)
     }
 
-    # VARSEL om virtuell videorunde
+    if (al_kort %in% "KLAR" && str_matches(tekst_1, "YK")) {
+      out(prefix,
+          sprintf(trl("Signaloverføring ok")),
+          postfix)
+    }
+
+        # VARSEL om virtuell videorunde
     if (al_kort %in% c("VARSEL") &&
         str_matches(tekst_1, "Virtuell Vekterrunde")) {
       out(prefix,
@@ -222,7 +234,13 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
 
     # Avsluttes signalement?
     if (hnd_type %in% '03') {
+      venteliste <- F
       out(trl("Behandling avsluttes"))
+    }
+
+    if (hnd_type %in% '65') {
+      venteliste <- F
+      out(trl("Behandling avsluttes automatisk"))
     }
 
   }
