@@ -33,6 +33,7 @@ Dette starter R. Skriv så
 >   install.packages("yaml")
 >   install.packages("fs")
 >   install.packages("stringr")
+>   install.packages("httr")
 >   q()
 
 Hvis du får noen spørsmål:

@@ -140,9 +140,10 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     }
 
     # Kontaktperson ringt
-    if (hnd_type %in% '02') {
+    if (hnd_type %in% '02' ||
+        (hnd_type %in% '71' && str_matches(tekst_1, "Anmerkning:.*Tlf:.*Anm:"))) {
       out(sig_dato, " ",
-          trl("Ringer kontaktperson på tlf"),
+          trl("Ringer kontaktperson på tlf"), " ",
           str_match_inner(tekst_1, "Tlf:\\s*(\\d+)"), " ",
           str_match_inner(tekst_1, "Lok:\\s*\\d+\\s*(.*)\\s*Anm:"))
     }
@@ -154,12 +155,20 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     }
 
     # Anmerkninger fra operatør
-    if (str_matches(tekst_1, "^Anmerkning:")) {
+    if (str_matches(tekst_1, "^Anmerkning:") &&
+        !str_matches(tekst_1, "Anmerkning:.*Tlf:.*Anm:")) {
       anm <- str_match_inner(tekst_1, "^Anmerkning:(.*)$")
       if (anm != "") {
         out(sig_dato, " ",
             trl("Operatør skriver: "),
             anm)
+        mtrl.anm <- mtranslate(anm, lang)
+        if (mtrl.anm != anm) {
+          out(sig_dato, " (",
+              trl("Maskinoversatt: "),
+              mtrl.anm,
+              ")")
+        }
       }
     }
 
@@ -169,6 +178,13 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
         out(sig_dato, " ",
             trl("Operatør skriver: "),
             anm)
+        mtrl.anm <- mtranslate(anm, lang)
+        if (mtrl.anm != anm) {
+          out(sig_dato, " (",
+              trl("Maskinoversatt: "),
+              mtrl.anm,
+              ")")
+        }
       }
     }
 

@@ -1,11 +1,11 @@
 Package: fmtsafeconlog
 Type: Package
 Title: Simplify safecon signal log and mail it
-Version: 0.1.1
+Version: 0.1.3
 Author: Jo Totland <jt@safe.com>
 Maintainer: Jo Totland <jt@safe4.com>
 Description: This is an internal tool
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: RODBC, RDCOMClient, yaml, fs, stringr
+Imports: RODBC, RDCOMClient, yaml, fs, stringr, httr

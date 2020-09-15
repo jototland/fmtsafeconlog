@@ -5,6 +5,8 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
   # Les data fra konfigurasjonfila
   config <- yaml::read_yaml(file=config.file)
 
+  set.ms.translator.api.key(config$msTranslatorApiKey)
+
   # Lag mappa vi lagrer forenklede logger i, hvis den ikke eksisterer
   output.dir <- config$outputDir
   if (!file.exists(output.dir)) {
@@ -72,7 +74,14 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
                     ".txt")))
 
   # Gå gjenom hver kunde i konfigurasjonfila
+  cat(paste0(
+    paste0(rep("-", length(config$customer)), collapse=""),
+    "|\n"),
+    file=stderr(), sep="")
   for (customer in config$customers) {
+
+    cat(">", file=stderr(), sep="")
+
     abonnent <- as.character(customer$abonnent)
 
     # Sett språk til etter hva vi allerede har funnet ut
@@ -155,4 +164,6 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
                          onlySaveDraft=only.save.mail.draft)
     }
   }
+
+  cat("\n", file=stderr(), sep="")
 }

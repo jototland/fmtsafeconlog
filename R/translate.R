@@ -42,7 +42,7 @@ translations <- list(
   ),
 
   "Ringer kontaktperson på tlf"=list(
-    se="Ringer kontaktperson på tlf"
+    se="Ringer kontaktperson via tlf"
   ),
 
   "Operatør bestemmer seg for å sende utrykning"=list(
@@ -147,6 +147,10 @@ translations <- list(
 
   "Virtuell vekterrunde fullført"=list(
     se="Virtuell vaktrunda slutförd"
+  ),
+
+    "Maskinoversatt: "=list(
+    se="Maskinöversatt: "
   )
 )
 translations <-
