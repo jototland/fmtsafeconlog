@@ -1,5 +1,3 @@
-options(encoding="UTF-8")
-
 translations <- list(
   "Behandling"=list(
     se="Behandling"

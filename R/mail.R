@@ -1,5 +1,3 @@
-#library(RDCOMClient)
-
 send.outlook.email <-
   function(to=character(0),          # vector of strings (email adresses)
            cc=character(0),          # vector of strings (email adresses)

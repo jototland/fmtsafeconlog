@@ -1,5 +1,3 @@
-#library(yaml)
-
 fmtsafeconlog <- function(odbc.dsn, config.file) {
   options(encoding="UTF-8")
   # Les data fra konfigurasjonfila

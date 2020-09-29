@@ -1,6 +1,3 @@
-#library(fs)
-#library(stringr)
-
 `%notin%` <- Negate(`%in%`)
 
 cat0 <- function(..., sep="") {

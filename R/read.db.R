@@ -1,5 +1,3 @@
-#library(RODBC)
-
 read.custinfo <- function (odbc.dsn, abonnenter) {
   conn <- RODBC::odbcConnect(odbc.dsn)
 
