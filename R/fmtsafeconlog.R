@@ -43,12 +43,27 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
     read.custinfo(odbc.dsn,
                   sapply(config$customers, function(x) {x$abonnent}))
 
-  # Legg til navn som kommer fra konfigurasjonsfile
+  # Legg til navn som kommer fra konfigurasjonsfila
   customers$navn <- sapply(config$customers, function(x) {x$navn})
 
-  # Legg til språk, basert på kjedekode
-  customers$lang <- "no"
-  customers$lang[customers$kaede >= 5000 & customers$kaede < 5999] <- "se"
+  # Legg til språk, basert på konfigurasjonsfila, ellers norsk
+  customers$lang <-
+    as.vector(
+      lapply(
+        config$customers,
+        function (x) {
+          ifelse(is.null(x$language),
+                 "no", # fall tilbake til norsk som standard
+                 ifelse(x$language == F, # uten anførselstegn: yaml no -> F
+                        "no",
+                        x$language))
+        }),
+      mode="character")
+  if (!all(customers$lang %in% c("no", "se"))) {
+    stop(paste0("Ugyldig språk: ",
+                customers$lang[customers$lang %notin% c("no", "se")]))
+  }
+
 
   # Sjekk at kundenavn i konfigurasjonsfil og safecon stemmer overens
   if (!all(tolower(customers$e_navn) == tolower(customers$navn))) {
