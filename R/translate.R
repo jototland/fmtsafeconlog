@@ -27,6 +27,14 @@ translations <- list(
     se="Signal behandlas automatiskt, placeras på väntelistan"
   ),
 
+  "Automatisk behandling"=list(
+    se="Automatisk behandling"
+  ),
+
+  "Manuelt opprettet behandling"=list(
+    se="Manuellt skapad behandling"
+  ),
+
   "Mottatt nytt signal, tilbake fra venteliste"=list(
     se="Ny signal mottagen, tillbaka från väntlistan"
   ),

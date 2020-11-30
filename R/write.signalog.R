@@ -16,15 +16,24 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
   venteliste.gruppenr <- NULL
   venteliste.sperr_angitte <- F
   venteliste.sperreliste <- NULL
+  autobehandling <- F
+  signalement <- F
   behandling <- 0
   retursignal <- F
-  for (i in seq_len(nrow(siglog))) {
+  nsigs <- nrow(siglog)
+  for (i in seq_len(nsigs)) {
     s_elem <- siglog[i,"s_elem"]
     sig_dato <- siglog[i, "sig_dato"]
     hnd_type <- siglog[i, "hnd_type"]
     al_kort <- siglog[i, "al_kort"]
     gruppenr <- siglog[i, "gruppenr"]
     tekst_1 <- siglog[i, "tekst_1"]
+    tekst_2 <- if (i < nsigs) (siglog[i+1, "tekst_1"]) else ''
+
+    # Hopp over oppgaver til kundesenteret, etc
+    if (s_elem == 0 && al_kort == '') {
+      next
+    }
 
     signalement <- s_elem != 0
 
@@ -32,15 +41,21 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     if (signalement && s_elem != previous_s_elem) {
       if (al_kort %in% c("VARSEL") &&
           str_matches(tekst_1, "Virtuell Vekterrunde")) {
+        autobehandling <- F
         out("\n\n")
+      } else if (hnd_type %in% '22') {
+        autobehandling <- F
+        out("\n\n", "Manuelt opprettet behandling", "\n",
+            sig_dato, " ", trl("Operatør starter ny behandling manuelt"))
+      } else if (str_matches(tekst_2, "definert, signal til VL")) {
+        autobehandling <- T
+        out("\n\n", trl("Automatisk behandling"))
       } else {
+        autobehandling <- F
         behandling <- behandling + 1
         out("\n\n",
             trl("Behandling"),
             " ", behandling)
-      }
-      if (hnd_type %in% '22') {
-        out(sig_dato, " ", trl("Operatør starter ny behandling manuelt"))
       }
     }
     previous_s_elem <- s_elem
@@ -92,14 +107,21 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
       } else if (str_matches(tekst_1, "definert, signal til VL")) {
         out(sig_dato, " ",
             trl("Signal behandles automatisk, legges på venteliste"))
+        autobehandling <- T
       } else if (!str_matches(tekst_1, "^Anm:")) {
         warning(paste0("ukjent måte å legge noe på venteliste: abonnent=", (siglog[i, "abonnent"]),
                        " sig_dato=", sig_dato, " s_elem=", s_elem, " hnd_type=", hnd_type, " tekst_1=", tekst_1))
       }
     }
 
+    if (autobehandling) {
+      if (al_kort %notin% c("", "POLLUT", "KLAR")) {
+        autobehandling <- F
+      }
+    }
+
     # Venteliste og nytt signal: mulig retur
-    if (venteliste) {
+    if (venteliste && !autobehandling) {
       if (al_kort != "") {
         retursignal <- F
         if (venteliste.sperr_angitte &&
@@ -128,14 +150,25 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     # Venteliste: timeout eller manuelt avsluttet
     if (venteliste && hnd_type %in% '62') {
       venteliste <- F
-      behandling <- behandling + 1
-      out("\n\n",
-          trl("Behandling"),
-          " ", behandling)
-      if (str_matches(tekst_1, "^Retursignal fra VL")) {
-        out(sig_dato, " ", trl("Timeout fra venteliste"))
-      } else if (str_matches(tekst_1, "^Overført fra venteliste")) {
-        out(sig_dato, " ", trl("Manuelt tatt ned fra venteliste"))
+      autobehandling <- F
+      if (str_matches(tekst_1, "^Overført fra venteliste")) {
+        autobehandling <- F
+        out("\n\n", "Manuelt opprettet behandling", "\n",
+            sig_dato, " ", trl("Manuelt tatt ned fra venteliste"))
+      } else {
+        behandling <- behandling + 1
+        out("\n\n",
+            trl("Behandling"),
+            " ", behandling)
+        if (str_matches(tekst_1, "^Retursignal fra VL")) {
+          out(sig_dato, " ", trl("Timeout fra venteliste"))
+        } else if (str_matches(tekst_1, "^Nyt signal, overf")) {
+          # do nothing, we already handle this perfectly
+        } else {
+          out("\n\n", sig_dato, " ", trl("Retur fra venteliste"))
+          warning(paste0("ukjent måte å komme tilbake fra venteliste: abonnent=", (siglog[i, "abonnent"]),
+                         " sig_dato=", sig_dato, " s_elem=", s_elem, " hnd_type=", hnd_type, " tekst_1=", tekst_1))
+        }
       }
     }
 
@@ -232,7 +265,7 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
           postfix)
     }
 
-        # VARSEL om virtuell videorunde
+    # VARSEL om virtuell videorunde
     if (al_kort %in% c("VARSEL") &&
         str_matches(tekst_1, "Virtuell Vekterrunde")) {
       out(prefix,
@@ -257,7 +290,7 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     if (hnd_type %in% '65') {
       venteliste <- F
       out(trl("Behandling avsluttes automatisk"))
+      autobehandling <- F
     }
-
   }
 }

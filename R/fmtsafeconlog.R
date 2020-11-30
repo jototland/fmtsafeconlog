@@ -4,6 +4,10 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
   config <- yaml::read_yaml(file=config.file)
 
   set.ms.translator.api.key(config$msTranslatorApiKey)
+  translations.enabled <- config$translationsEnabled
+  if (is.null(translations.enabled)) {
+    translations.enabled <- T
+  }
 
   # Lag mappa vi lagrer forenklede logger i, hvis den ikke eksisterer
   output.dir <- config$outputDir
@@ -62,6 +66,16 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
                 customers$lang[customers$lang %notin% c("no", "se")]))
   }
 
+  # Legg til 10 max antall inkluderte behandlinger pr måned
+  customers$includedManualProcessings <-
+    as.vector(
+      lapply(
+        config$customers,
+        function (x) {
+          ifelse(is.null(x$language),
+                 10,
+                 x$language)
+        }))
 
   # Sjekk at kundenavn i konfigurasjonsfil og safecon stemmer overens
   if (!all(tolower(customers$e_navn) == tolower(customers$navn))) {
@@ -99,7 +113,11 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
 
     # Sett språk til etter hva vi allerede har funnet ut
     lang <- customers[abonnent, "lang"]
-    trl <- function(x) { translate(x, lang=lang) }
+    if (translations.enabled) {
+      trl <- function(x) { translate(x, lang=lang) }
+    } else {
+      trl <- function(x) {x}
+    }
 
     # Les signalloggen fra safecon database
     siglog <- read.signalog(odbc.dsn=odbc.dsn,
@@ -125,7 +143,10 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
     headerPos <- seek(fd, where=0, origin="current")
 
     # Skriv ut forenklet signallog
-    write.signalog(siglog, fd, lang=lang)
+    if (translations.enabled)
+      write.signalog(siglog, fd, lang=lang)
+    else
+      write.signalog(siglog, fd, lang="no")
 
     # Hvor lang ble den forenklede signalloggen?
     bytes.written <- seek(fd, where=0, origin="current") - headerPos
