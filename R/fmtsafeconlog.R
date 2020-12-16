@@ -33,10 +33,10 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
   only.save.mail.draft <- T
   if (send.mail) {
     only.save.mail.draft <- tolower(config$onlySaveMailDraft)
-    if (only.save.mail.draft %in% c("j", "ja", "y", "yes,", "true"))
+    if (only.save.mail.draft %in% c(T, "j", "ja", "y", "yes,", "true"))
       only.save.mail.draft <- T
-    else if (only.save.mail.draft %in% c("n", "nei", "no", "false"))
-      only.save.mail.draft <-T
+    else if (only.save.mail.draft %in% c(F, "n", "nei", "no", "false"))
+      only.save.mail.draft <-F
     else { stop("Ugyldig verdi i konfigurasjonfil: only.save.mail.draft")}
   }
 
