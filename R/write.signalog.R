@@ -1,11 +1,3 @@
-if (!exists("%notin%", mode="function")) {
-  source("utils.R")
-}
-
-if (!exists("translate", mode="function")) {
-  source("translate.R")
-}
-
 write.signalog <- function(siglog, con=stdout(), lang="no") {
   trl <- function(x) { translate(x, lang=lang) }
   out <- function(...) { writeLines(paste0(...), con=con) }
@@ -20,6 +12,7 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
   signalement <- F
   behandling <- 0
   retursignal <- F
+  siste.innb <- F
   nsigs <- nrow(siglog)
   for (i in seq_len(nsigs)) {
     s_elem <- siglog[i,"s_elem"]
@@ -231,11 +224,22 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
     }
 
     # INNB og ALARM
+    # Kentima sender alltid sone 0, kameranummer sendes separat
+    if (hnd_type %in% 'EU' && str_matches(tekst_1, "Hendelsesoppdatering:.*Kamera \\d+\\]") && siste.innb) {
+      kam <- str_match_inner(tekst_1, "Hendelsesoppdatering:.*Kamera (\\d+)\\]")
+      out(prefix,
+          sprintf(trl("Kamera %s"), kam),
+          postfix)
+    }
+    # Her begynner den egentlige innbruddssignalshåndteringen
     if (al_kort %in% c("INNB", "ALARM")) {
+      siste.innb <- T
       out(prefix,
           sprintf(trl("Alarm utløst sone %d"),
                   gruppenr),
           postfix)
+    } else {
+      siste.innb <- F
     }
 
     # Bosch CI CID: 300 er SYSTEM eller KLAR på kamera
@@ -264,6 +268,7 @@ write.signalog <- function(siglog, con=stdout(), lang="no") {
           sprintf(trl("Signaloverføring ok")),
           postfix)
     }
+
 
     # VARSEL om virtuell videorunde
     if (al_kort %in% c("VARSEL") &&

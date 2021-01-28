@@ -66,16 +66,6 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
                 customers$lang[customers$lang %notin% c("no", "se")]))
   }
 
-  # Legg til 10 max antall inkluderte behandlinger pr måned
-  customers$includedManualProcessings <-
-    as.vector(
-      lapply(
-        config$customers,
-        function (x) {
-          ifelse(is.null(x$language),
-                 10,
-                 x$language)
-        }))
 
   # Sjekk at kundenavn i konfigurasjonsfil og safecon stemmer overens
   if (!all(tolower(customers$e_navn) == tolower(customers$navn))) {
@@ -179,21 +169,27 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
     if (send.mail && (bytes.written != 0 || always.mail)) {
       if (customer$addManualProcessingPrMonth) {
         manProc <- manual.processings.pr.month(odbc.dsn, customer$abonnent)
-        trailer <- paste0(
-          trailer, "\n\n",
-          trl("Antall behandlinger hittil i måneden: "), manProc, "\n",
-          trl("(dette bør være under 10)"))
+        trailer <- paste0(trailer, "\n\n",
+                          trl("Antall behandlinger hittil i måneden: "), manProc, "\n",
+                          sprintf(trl("(dette bør være under %s)"),
+                                  ifelse(is.null(customer$includedManualProcessings),
+                                         10,
+                                         customer$includedManualProcessings)),
+                          "\n",
+                          trl("Antallet behandlinger er et estimat,\nse tidligere utsendte rapporter for mer nøyaktige tall."),
+                          "\n"
+                          )
       }
       send.outlook.email(to=customer$mailto,
                          cc=customer$mailcc,
                          bcc=customer$mailbcc,
                          onbehalf="customercenter@safe4.com",
-                         subject=paste0("Hendelseslogg ", customer$navn,
-                                        " fra ", from.date.str,
-                                        " til ", to.date.str),
-                         body=paste0(header, trailer, "\n\n",
-                                    trl("Med vennlig hilsen Safe4"),
-                                    "\n"),
+                         subject=enc2utf8(paste0("Hendelseslogg ", customer$navn,
+                                                 " fra ", from.date.str,
+                                                 " til ", to.date.str)),
+                         body=enc2utf8(paste0(header, trailer, "\n\n",
+                                              trl("Med vennlig hilsen Safe4"),
+                                              "\n")),
                          attachments = customers[abonnent, "filename"],
                          onlySaveDraft=only.save.mail.draft)
     }

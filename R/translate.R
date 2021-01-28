@@ -143,8 +143,8 @@ translations <- list(
     se="Antal behandlingar hittills denna månad: "
   ),
 
-  "(dette bør være under 10)"=list(
-    se="(detta bör vara under 10)"
+  "(dette bør være under %s)"=list(
+    se="(detta bör vara under %s)"
   ),
 
   "Tidsvarsling om virtuell vekterrunde"=list(
@@ -157,6 +157,14 @@ translations <- list(
 
     "Maskinoversatt: "=list(
     se="Maskinöversatt: "
+  ),
+
+  "Kamera %s"=list(
+    se="Kamera %s"
+  ),
+
+  "Antallet behandlinger er et estimat,\nse tidligere utsendte rapporter for mer nøyaktige tall."=list(
+    se="Antalet behandlingar är en uppskattning,\nse tidigare utfärdade rapporter för mer exakta siffror."
   )
 )
 translations <-
