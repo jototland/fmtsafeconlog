@@ -7,6 +7,9 @@ send.outlook.email <-
            body=NULL,                # string
            attachments=character(0), # vector of strings (filenames)
            onlySaveDraft=T) {        # change to F if you want to send instad of save draft
+  if (length(to)+length(cc)+length(bcc) == 0) {
+    return(0)
+  }
   outlookApp <- RDCOMClient::COMCreate("Outlook.Application")
   outlookMail <- outlookApp$CreateItem(0)
   outlookMail[['InternetCodePage']] <- 65001

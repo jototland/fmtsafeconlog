@@ -66,6 +66,15 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
                 customers$lang[customers$lang %notin% c("no", "se")]))
   }
 
+  # Legg til "addManualProcessingPrMonth: no" hvis ikke spesifisert
+  customers$addManualProcessingPrMonth <-
+    as.vector(
+      lapply(config$customers,
+             function(x) {
+               ifelse(is.null(x$addManualProcessingPrMonth),
+                      F,
+                      !!x$addManualProcessingPrMonth)
+               }),mode="logical")
 
   # Sjekk at kundenavn i konfigurasjonsfil og safecon stemmer overens
   if (!all(tolower(customers$e_navn) == tolower(customers$navn))) {
@@ -167,7 +176,8 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
 
     # Hvis vi skal sende mail, så gjør vi det nå
     if (send.mail && (bytes.written != 0 || always.mail)) {
-      if (customer$addManualProcessingPrMonth) {
+      if (customers[abonnent, "addManualProcessingPrMonth"]) {
+      # if (customer$addManualProcessingPrMonth) {
         manProc <- manual.processings.pr.month(odbc.dsn, customer$abonnent)
         trailer <- paste0(trailer, "\n\n",
                           trl("Antall behandlinger hittil i måneden: "), manProc, "\n",
