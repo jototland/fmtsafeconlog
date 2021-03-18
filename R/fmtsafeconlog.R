@@ -26,7 +26,7 @@ fmtsafeconlog <- function(odbc.dsn, config.file) {
   if (send.mail %in% c("j", "ja", "y", "yes,", "true")) {
     send.mail <- T
   } else if (send.mail %in% c("n", "nei", "no", "false")) {
-    send.mail <-T
+    send.mail <- F
   } else { stop("Ugyldig verdi i konfigurasjonfil: send.mail")}
 
   # Sjekk om vi skal lagre i utboksen (standard), eller faktisk sende
