@@ -46,8 +46,8 @@ parse.date <- function(input) {
                tryformats = c("%Y-%m-%d %H:%M:%OS",
                               "%Y-%m-%d %H:%M",
                               "%Y-%m-%d"))
-  }, warning=function(w) { usage(); stop("Incorrectly formatted date/time")
-  }, error=function(w) { usage(); stop("Incorrectly formatted date/time")
+  }, warning=function(w) { stop("Incorrectly formatted date/time: ", input)
+  }, error=function(w) { stop("Incorrectly formatted date/time: ", input)
   })
   return(result)
 }

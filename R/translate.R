@@ -39,6 +39,10 @@ translations <- list(
     se="Ny signal mottagen, tillbaka från väntlistan"
   ),
 
+  "Retur fra venteliste"=list(
+    se="Retur från väntlistan"
+  ),
+
   "Timeout fra venteliste"=list(
     se="Timeout från väntlistan"
   ),
